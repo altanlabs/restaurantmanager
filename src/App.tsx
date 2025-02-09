@@ -1,47 +1,41 @@
-import { Theme } from "@radix-ui/themes";
-import "@radix-ui/themes/styles.css";
-import "./index.css";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { ThemeProvider } from "@/theme/theme-provider";
-import RootBoundary from "./components/errors/RootBoundary";
-
-import { Layout } from "./layout";
-import Index from "./pages/index";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import Layout from "./layout";
+import Dashboard from "./pages/index";
+import InventoryPage from "./pages/inventory";
+import SuppliersPage from "./pages/suppliers";
 import NotFound from "./pages/NotFound";
-import { useTheme } from "./theme/use-theme";
+import { ThemeProvider } from "./theme/theme-provider";
+import { Toaster } from "./components/ui/sonner";
 
-const App = () => {
-  const { theme } = useTheme();
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Layout />,
+    errorElement: <NotFound />,
+    children: [
+      {
+        index: true,
+        element: <Dashboard />,
+      },
+      {
+        path: "inventory",
+        element: <InventoryPage />,
+      },
+      {
+        path: "suppliers",
+        element: <SuppliersPage />,
+      },
+    ],
+  },
+]);
 
-  const router = createBrowserRouter([
-    {
-      path: "/",
-      element: (
-        <Layout showSidebar={false} showHeader={false} showFooter={false} />
-      ),
-      errorElement: <RootBoundary />,
-      children: [
-        {
-          index: true,
-          element: <Index />,
-        },
-        {
-          path: "*",
-          element: <NotFound />,
-        },
-      ],
-    },
-  ]);
-
+function App() {
   return (
-    <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
-      <Theme appearance={theme === "system" ? "light" : theme}>
-        <div className={theme}>
-          <RouterProvider router={router} />
-        </div>
-      </Theme>
+    <ThemeProvider>
+      <RouterProvider router={router} />
+      <Toaster />
     </ThemeProvider>
   );
-};
+}
 
 export default App;
